@@ -12,16 +12,13 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#define MAXX 640
-#define MAXY 480
-#define MAXITER 32768
-
-FILE* input; // descriptor for the list of tiles (cannot be stdin)
-int   color_pick = 5; // decide how to choose the color palette
-
 // Some definitions have been moved to a header file so it can be reused
 // in other parts of the project
 #include "mandel-tiles-graphic.h"
+
+// Globals defined in the header
+FILE* input; // descriptor for the list of tiles (cannot be stdin)
+int   color_pick = 5; // decide how to choose the color palette
 
 /****************************************************************
  * Nesta versao, o programa principal le diretamente da entrada
@@ -174,29 +171,29 @@ void fractal( fractal_param_t* p )
  * e computa as estatisticas do sistema (que serao a unica saida
  * visivel do seu programa na versao que segue o enunciado.
  ****************************************************************/
-int main ( int argc, char* argv[] )
-{
-	int i,j,k;
-	fractal_param_t p;
+// int main ( int argc, char* argv[] )
+// {
+// 	int i,j,k;
+// 	fractal_param_t p;
 
-	if ((argc!=2)&&(argc!=3)) {
-		fprintf(stderr,"usage %s filename [color_pick]\n", argv[0] );
-		exit(-1);
-	} 
-	if (argc==3) {
-		color_pick = atoi(argv[2]);
-	} 
-	if ((input=fopen(argv[1],"r"))==NULL) {
-		perror("fdopen");
-		exit(-1);
-	}
+// 	if ((argc!=2)&&(argc!=3)) {
+// 		fprintf(stderr,"usage %s filename [color_pick]\n", argv[0] );
+// 		exit(-1);
+// 	} 
+// 	if (argc==3) {
+// 		color_pick = atoi(argv[2]);
+// 	} 
+// 	if ((input=fopen(argv[1],"r"))==NULL) {
+// 		perror("fdopen");
+// 		exit(-1);
+// 	}
 
-	// init_gr();  // Essa biblioteca nao funciona com Pthreads! REMOVA
-	while (input_params(&p)!=EOF) {
-		fractal(&p); // No exercicio a funcao nao vai exibir nada! :-(
-	}
-	// end_gr();  // Essa biblioteca nao funciona com Pthreads! REMOVA
+// 	// init_gr();  // Essa biblioteca nao funciona com Pthreads! REMOVA
+// 	while (input_params(&p)!=EOF) {
+// 		fractal(&p); // No exercicio a funcao nao vai exibir nada! :-(
+// 	}
+// 	// end_gr();  // Essa biblioteca nao funciona com Pthreads! REMOVA
 
-	return 0;
-}
+// 	return 0;
+// }
 

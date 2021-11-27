@@ -1,0 +1,1 @@
+make run ARGS="mandelbrot_tasks/t 3"
