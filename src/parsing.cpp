@@ -1,6 +1,8 @@
 #include "parsing.h"
 
 #include <iostream>
+#include <fstream>
+#include <vector>
 
 /*
 Compares if two structs 'fractal_param_t' are equal, i.e., have the same
@@ -97,13 +99,6 @@ void double_tok_parsing(double& out, std::string& str, std::string delim){
     }
 }
 
-// typedef struct {
-// 	int left; int low;  // lower left corner in the screen
-// 	int ires; int jres; // resolution in pixels of the area to compute
-// 	double xmin; double ymin;   // lower left corner in domain (x,y)
-// 	double xmax; double ymax;   // upper right corner in domain (x,y)
-// } fractal_param_t;
-
 /*
 Breaks an input string with fractal parameters and puts them into the 
 appropriate struct object (returns a pointer to it)
@@ -123,4 +118,35 @@ std::shared_ptr<fractal_param_t> string2fractalparam(std::string str){
     double_tok_parsing(pointer->ymax, str, " ");
 
     return pointer;
+}
+
+/*
+Reads N lines from file. Each line is transformed into a pointer to struct
+'fractal_param' and stored into vector 'result', passed as parameter. If the 
+file has less than N lines, it will only read those lines available.
+
+Returns 'true' if we reached end of file after reading those N lines (or less
+if there were less available).
+*/
+bool readFromFile (std::vector<std::shared_ptr<fractal_param_t>>& result,
+                   std::ifstream& input, int n_lines)
+{
+    std::string line;
+    int i = 0;
+    while (std::getline(input, line)){
+        result.push_back(string2fractalparam(line));
+        i++;
+        if (i >= n_lines){
+            break;
+        }
+    }
+
+    // Detect if we reached EOF, i.e., this or next character is EOF
+    char peek = input.peek();
+    bool end = (peek == EOF);
+    if (i == n_lines && !(end)){
+        return false;
+    }else{
+        return true;
+    }
 }

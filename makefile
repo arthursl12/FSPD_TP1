@@ -6,7 +6,7 @@ BUILDDIR := build
 TARGET := main
 
 SRCEXT := cpp
-CXXFLAGS := -Wall 
+CXXFLAGS := -g -Wall 
 LIBS := 
 INC := -I include -I third-party
 
