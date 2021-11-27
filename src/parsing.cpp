@@ -1,4 +1,4 @@
-#include "aux.h"
+#include "parsing.h"
 
 #include <iostream>
 
@@ -48,8 +48,6 @@ bool str_tok(std::string& str, std::string delimiter, std::string& token){
     str.erase(0, idx+1); /* Erases token and delimiter from input string */
     return true;
 }
-
-
 
 /*
 Parses an integer from a string. This number is separated by a simple space
@@ -108,7 +106,7 @@ void double_tok_parsing(double& out, std::string& str, std::string delim){
 
 /*
 Breaks an input string with fractal parameters and puts them into the 
-appropriate struct
+appropriate struct object (returns a pointer to it)
 */
 std::shared_ptr<fractal_param_t> string2fractalparam(std::string str){
     std::shared_ptr<fractal_param_t> pointer;

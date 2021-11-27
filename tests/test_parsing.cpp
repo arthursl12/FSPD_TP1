@@ -2,7 +2,7 @@
 #include "doctest.h"
 
 #include "mandel-tiles-graphic.h"
-#include "aux.h"
+#include "parsing.h"
 
 TEST_CASE("int_tok_parsing"){
     SUBCASE("Base"){

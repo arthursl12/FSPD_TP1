@@ -2,7 +2,7 @@
 #include "doctest.h"
 
 #include "mandel-tiles-graphic.h"
-#include "aux.h"
+#include "parsing.h"
 
 TEST_CASE("Fractalparam comparator -- not pointer"){
     fractal_param_t fp1;
