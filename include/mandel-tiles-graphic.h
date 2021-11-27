@@ -6,6 +6,8 @@
 #define MAXY 480
 #define MAXITER 32768
 
+#include <cstdio>
+
 extern FILE* input; // descriptor for the list of tiles (cannot be stdin)
 extern int color_pick; // decide how to choose the color palette
 
