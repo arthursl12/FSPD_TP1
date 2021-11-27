@@ -9,8 +9,8 @@ BIN_FOLDER := bin/
 FRAMEWORK_FOLDER := munit/
 FRAMEWORK_MODULE := $(FRAMEWORK_FOLDER)/munit.c
 
-MODULES := ../linked_list.c
-TEST_MODULES := test_linked_list.c
+MODULES := ../queue.c
+TEST_MODULES := test_queue.c
 
 build: $(FRAMEWORK_MODULE) $(MODULES)
 	mkdir $(BIN_FOLDER)

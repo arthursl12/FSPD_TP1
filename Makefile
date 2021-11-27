@@ -2,12 +2,13 @@ BIN_DIR := bin/
 
 all: build
 
-build: mandel-tiles-graphic.c
-	mkdir $(BIN_DIR)
+build: bin | mandel-tiles-graphic.c
 	# gcc -o prog mandel-tiles-graphic.c -lgraph
-	gcc -o $(BIN_DIR)prog mandel-tiles-graphic.c
+	g++ -o $(BIN_DIR)prog mandel-tiles-graphic.c
 
-
+bin: 
+	mkdir $(BIN_DIR)
+	
 run: build
 	./$(BIN_DIR)prog $(ARGS)
 

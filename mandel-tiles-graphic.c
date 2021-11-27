@@ -19,13 +19,9 @@
 FILE* input; // descriptor for the list of tiles (cannot be stdin)
 int   color_pick = 5; // decide how to choose the color palette
 
-// params for each call to the fractal function
-typedef struct {
-	int left; int low;  // lower left corner in the screen
-	int ires; int jres; // resolution in pixels of the area to compute
-	double xmin; double ymin;   // lower left corner in domain (x,y)
-	double xmax; double ymax;   // upper right corner in domain (x,y)
-} fractal_param_t;
+// Some definitions have been moved to a header file so it can be reused
+// in other parts of the project
+#include "mandel-tiles-graphic.h"
 
 /****************************************************************
  * Nesta versao, o programa principal le diretamente da entrada
