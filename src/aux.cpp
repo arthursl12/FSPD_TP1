@@ -119,5 +119,10 @@ std::shared_ptr<fractal_param_t> string2fractalparam(std::string str){
     int_tok_parsing(pointer->ires, str, " ");
     int_tok_parsing(pointer->jres, str, " ");
 
-    
+    double_tok_parsing(pointer->xmin, str, " ");
+    double_tok_parsing(pointer->ymin, str, " ");
+    double_tok_parsing(pointer->xmax, str, " ");
+    double_tok_parsing(pointer->ymax, str, " ");
+
+    return pointer;
 }
