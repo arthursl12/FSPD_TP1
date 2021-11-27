@@ -4,8 +4,6 @@
 #include "mandel-tiles-graphic.h"
 #include "aux.h"
 
-
-
 TEST_CASE("int_tok_parsing"){
     SUBCASE("Base"){
         int myInt = 0;
@@ -34,6 +32,37 @@ TEST_CASE("int_tok_parsing"){
         int myInt = 0;
         std::string str = "";
         CHECK_THROWS_MESSAGE(int_tok_parsing(myInt, str, " "), "Int Parsing Failed");
+    }
+}
+
+TEST_CASE("double_tok_parsing"){
+    SUBCASE("Base"){
+        double myDouble = 0;
+        std::string str = "201.01 202.02 203.03";
+        CHECK_NOTHROW(double_tok_parsing(myDouble, str, " "));
+    }
+    SUBCASE("Sucess: many"){
+        double myDouble = 0;
+        std::string str = "201.01 202.02 203.03";
+
+        double_tok_parsing(myDouble, str, " ");
+        CHECK(myDouble == 201.01);
+        double_tok_parsing(myDouble, str, " ");
+        CHECK(myDouble == 202.02);
+        double_tok_parsing(myDouble, str, " ");
+        CHECK(myDouble == 203.03);
+    }
+    SUBCASE("Success: only 1"){
+        double myDouble = 0;
+        std::string str = "201.01";
+        double_tok_parsing(myDouble, str, " ");
+        CHECK(myDouble == 201.01);
+        CHECK_THROWS_MESSAGE(double_tok_parsing(myDouble, str, " "), "Double Parsing Failed");
+    }
+    SUBCASE("Failure: empty"){
+        double myDouble = 0;
+        std::string str = "";
+        CHECK_THROWS_MESSAGE(double_tok_parsing(myDouble, str, " "), "Double Parsing Failed");
     }
 }
 

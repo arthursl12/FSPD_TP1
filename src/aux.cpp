@@ -75,6 +75,30 @@ void int_tok_parsing(int& out, std::string& str, std::string delim){
     }
 }
 
+/*
+Parses an double from a string. This number is separated by a simple space
+from the rest of the string. It erases the number and the delimiter from the
+input string and stores the double into passed 'out' parameter.
+*/
+void double_tok_parsing(double& out, std::string& str, std::string delim){
+    std::string token;
+    bool res;
+
+    res = str_tok(str, " ", token);
+    if (res){
+        out = std::stod(token);
+    }else{
+        try{
+            // We didn't find the delimiter, but maybe the string
+            // left is a number itself
+            out = std::stod(token); 
+            str.clear();
+        }catch (std::exception& e){
+            throw "Int Parsing Failed";
+        }
+    }
+}
+
 // typedef struct {
 // 	int left; int low;  // lower left corner in the screen
 // 	int ires; int jres; // resolution in pixels of the area to compute
