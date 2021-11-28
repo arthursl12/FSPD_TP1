@@ -16,8 +16,18 @@ pthread_cond_t pot_filled;
 pthread_mutex_t queue_access;
 
 void* cook_thread(void* data){
-    // 
+    // Getting the parameters passed
     cook_data* args = (cook_data*) data;
+
+    // Check for ratio workers-queue
+    if (args->n_threads > 0 && (args->queue_size > 4*args->n_threads)){
+        std::cout << "Queue too long for the amount of threads created";
+        std::cout << std::endl;
+
+        int* myInt = (int*) malloc(sizeof(int));
+        *myInt = EXIT_FAILURE;
+        return (void*) myInt;
+    }
 
     // Clear queue
     args->task_queue = std::make_shared<QUEUE_TYPE>();

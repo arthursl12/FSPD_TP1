@@ -7,6 +7,7 @@
 #include <queue>
 
 #define QUEUE_TYPE std::queue<std::shared_ptr<fractal_param_t>>
+#define MAX_QUEUE_WORKERS_RATIO 4
 
 // Globals for thread sync and control
 extern pthread_cond_t cook_needed;
