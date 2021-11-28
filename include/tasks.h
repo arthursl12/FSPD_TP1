@@ -28,5 +28,8 @@ typedef struct cook_data {
 } cook_data;
 
 void* cook_thread(void* data);
+void createEOWList(std::vector<std::shared_ptr<fractal_param_t>>& output, 
+                   int n_threads);
+
 
 #endif /* TASKS_H */

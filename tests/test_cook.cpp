@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 #include "mandel-tiles-graphic.h"
@@ -82,4 +81,24 @@ TEST_CASE("Worker/Queue ratio test "){
 	pthread_cond_destroy(&pot_filled);
 	pthread_cond_destroy(&cook_needed);
 	pthread_mutex_destroy(&queue_access);
+}
+
+TEST_CASE("Create EOWList"){
+    std::vector<std::shared_ptr<fractal_param_t>> output;
+
+    SUBCASE("0"){
+        CHECK(output.empty());
+        createEOWList(output, 0);
+        CHECK(output.empty());
+    }
+    SUBCASE("1"){
+        CHECK(output.empty());
+        createEOWList(output, 1);
+        CHECK_FALSE(output.empty());
+        CHECK(output.empty());
+
+    }
+    
+
+
 }

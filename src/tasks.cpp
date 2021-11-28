@@ -65,3 +65,8 @@ void* cook_thread(void* data){
     pthread_mutex_unlock(&queue_access);
     return EXIT_SUCCESS;
 }
+
+void createEOWList(std::vector<std::shared_ptr<fractal_param_t>>& output, 
+                   int n_threads){
+                       /* TODO */
+}

@@ -1,12 +1,13 @@
 #ifndef VECTOR_OPS_H
 #define VECTOR_OPS_H
+#pragma once
 
 #include "mandel-tiles-graphic.h"
 #include "parsing.h"
 
 #include <iostream>
 
-void printFractalParam(std::shared_ptr<fractal_param_t> fp){
+inline void printFractalParam(std::shared_ptr<fractal_param_t> fp){
     std::cout << fp->left << "," << fp->low << ",";
     std::cout << fp->ires << "," << fp->jres << ",";
     std::cout << fp->xmin << "," << fp->ymin << ",";
@@ -15,13 +16,13 @@ void printFractalParam(std::shared_ptr<fractal_param_t> fp){
     
 }
 
-void fillVector(std::vector<std::shared_ptr<fractal_param_t>>& correct, 
+inline void fillVector(std::vector<std::shared_ptr<fractal_param_t>>& correct, 
                 std::string str)
 {
     correct.push_back(string2fractalparam(str));
 }
 
-bool equalVector(std::vector<std::shared_ptr<fractal_param_t>>& vec1,
+inline bool equalVector(std::vector<std::shared_ptr<fractal_param_t>>& vec1,
                  std::vector<std::shared_ptr<fractal_param_t>>& vec2)
 {
     if (vec1.size() != vec2.size()){
