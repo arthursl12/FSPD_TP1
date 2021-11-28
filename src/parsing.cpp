@@ -125,6 +125,8 @@ Reads N lines from file. Each line is transformed into a pointer to struct
 'fractal_param' and stored into vector 'result', passed as parameter. If the 
 file has less than N lines, it will only read those lines available.
 
+Note: result will be cleared before being filled
+
 Returns 'true' if we reached end of file after reading those N lines (or less
 if there were less available).
 */
@@ -132,6 +134,7 @@ bool readFromFile (std::vector<std::shared_ptr<fractal_param_t>>& result,
                    std::ifstream& input, int n_lines)
 {
     std::string line;
+    result.clear();
     int i = 0;
     while (std::getline(input, line)){
         result.push_back(string2fractalparam(line));

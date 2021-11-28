@@ -7,7 +7,7 @@ TARGET := main
 
 SRCEXT := cpp
 CXXFLAGS := -g -Wall 
-LIBS := 
+LIBS := -lpthread
 INC := -I include -I third-party
 
 MODULES = $(wildcard $(SRCDIR)/*.cpp)
@@ -41,7 +41,7 @@ $(TESTS2): %.o : %.cpp
 	$(shell mkdir -p $(TESTDIR))
 	$(shell mkdir -p $(TESTSBINDIR))
 	@echo TESTE: $<
-	$(CXX) $(INC) $(CXXFLAGS) $< $(OBJDIR) -o $(TESTSBINDIR)/$(patsubst %.o,%,$(notdir $@))
+	$(CXX) $(INC) $(CXXFLAGS) $< $(OBJDIR) $(LIBS) -o $(TESTSBINDIR)/$(patsubst %.o,%,$(notdir $@))
 	$(TESTSBINDIR)/$(patsubst %.o,%,$(notdir $@))
 	$(RM) test_*.gcno
 	$(RM) test_*.gcda
