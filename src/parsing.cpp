@@ -150,3 +150,24 @@ bool readFromFile (std::vector<std::shared_ptr<fractal_param_t>>& result,
         return true;
     }
 }
+
+/*
+Generates a EOW task. It is a struct fractal_params, but all values are 0
+*/
+std::shared_ptr<fractal_param_t> generateEOW(){
+    std::shared_ptr<fractal_param_t> fp1;
+    fp1 = std::make_shared<fractal_param_t>();
+    fp1->left = 0; fp1->low = 0; fp1->ires = 0; fp1->jres = 0;
+    fp1->xmin = 0; fp1->ymin = 0;
+    fp1->xmax = 0; fp1->ymax = 0;
+    return fp1;
+}
+
+/*
+Checks if a given struct fractal_params is an EOW task, i.e., all its 
+attributes' values are 0 
+*/
+bool isEOW(std::shared_ptr<fractal_param_t> fp){
+    std::shared_ptr<fractal_param_t> eow = generateEOW();
+    return fractalParamComparator(fp, eow);
+}

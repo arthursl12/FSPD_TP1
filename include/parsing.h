@@ -18,5 +18,8 @@ void double_tok_parsing(double& out, std::string& str, std::string delim);
 
 bool readFromFile (std::vector<std::shared_ptr<fractal_param_t>>& result,
                    std::ifstream& input, int n_lines);
+std::shared_ptr<fractal_param_t> generateEOW();
+bool isEOW(std::shared_ptr<fractal_param_t> fp);
+
 
 #endif /* AUX_H */
