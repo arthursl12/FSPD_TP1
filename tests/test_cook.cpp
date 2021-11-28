@@ -95,10 +95,18 @@ TEST_CASE("Create EOWList"){
         CHECK(output.empty());
         createEOWList(output, 1);
         CHECK_FALSE(output.empty());
-        CHECK(output.empty());
-
+        std::shared_ptr<fractal_param_t> zeroParam = generateEOW();
+        for (auto ptr : output){
+            CHECK(fractalParamComparator(ptr, zeroParam));
+        }
     }
-    
-
-
+    SUBCASE("More"){
+        CHECK(output.empty());
+        createEOWList(output, 4);
+        CHECK_FALSE(output.empty());
+        std::shared_ptr<fractal_param_t> zeroParam = generateEOW();
+        for (auto ptr : output){
+            CHECK(fractalParamComparator(ptr, zeroParam));
+        }
+    }
 }

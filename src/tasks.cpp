@@ -3,14 +3,6 @@
 
 #include <iostream>
 
-/*
-
-pthread_cond_t condition;
-pthread_cond_init ( &condition, &attr );
-pthread_cond_destroy ( &condition); 
-pthread_cond_wait ( &condition, &mutex );
-pthread_cond_signal ( &condition );        /* sinaliza um   */
-
 pthread_cond_t cook_needed;
 pthread_cond_t pot_filled;
 pthread_mutex_t queue_access;
@@ -67,6 +59,9 @@ void* cook_thread(void* data){
 }
 
 void createEOWList(std::vector<std::shared_ptr<fractal_param_t>>& output, 
-                   int n_threads){
-                       /* TODO */
+                   int n_threads)
+{
+    for (int i = 0; i < n_threads; i++){
+        output.push_back(generateEOW());
+    }
 }
