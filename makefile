@@ -37,7 +37,7 @@ $(TARGET).o: $(OBJDIR)
 # make tester: compila e roda todos os testes da pasta tests
 # make tests/test_[nome].o : compila esse teste específico
 tester: $(TESTS2)
-$(TESTS2): %.o : %.cpp
+$(TESTS2): %.o : %.cpp | $(TARGET).o
 	$(shell mkdir -p $(TESTDIR))
 	$(shell mkdir -p $(TESTSBINDIR))
 	@echo TESTE: $<
