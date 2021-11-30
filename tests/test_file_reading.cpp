@@ -48,6 +48,21 @@ TEST_CASE("readFromFile N - Continue where stopped"){
     CHECK_FALSE(res);
 }
 
+TEST_CASE("readFromFile N - try reading already EOF'd file"){
+    std::ifstream infile("mandelbrot_tasks/z1");
+    std::vector<std::shared_ptr<fractal_param_t>> output;
+    std::vector<std::shared_ptr<fractal_param_t>> correct;
+
+    bool res = readFromFile(output, infile, 5);
+    output.clear();
+    res = readFromFile(output, infile, 5);
+    std::cout << "res: " << res << std::endl;
+
+    std::cout << "L(out): " << output.size() << "; L(in): " << correct.size() << std::endl;
+    CHECK(equalVector(output, correct));
+    CHECK(res);
+}
+
 TEST_CASE("readFromFile - more than necessary"){
     std::ifstream infile("mandelbrot_tasks/b");
     std::vector<std::shared_ptr<fractal_param_t>> output;
