@@ -48,7 +48,7 @@ void* cook_thread(void* data){
     pthread_mutex_lock(&queue_access);      // Lock queue acess
     bool eof = readFromFile(output, infile, args->queue_size);
     for (auto fp_ptr : output){
-        args->task_queue->push(fp_ptr);
+        args->task_queue->push_back(fp_ptr);
         args->created_tasks++;
     }
 

@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include <queue>
 
-#define QUEUE_TYPE std::queue<std::shared_ptr<fractal_param_t>>
+#define QUEUE_TYPE std::deque<std::shared_ptr<fractal_param_t>>
 #define MAX_QUEUE_WORKERS_RATIO 4
 
 // Globals for thread sync and control

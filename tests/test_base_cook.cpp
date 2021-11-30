@@ -50,13 +50,13 @@ TEST_CASE("cook_data Comparator"){
         CHECK_FALSE(equalCookData(cook_args, cook_args2));
     }
     SUBCASE("Queue content"){
-        cook_args.task_queue->push(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
-        cook_args.task_queue->push(string2fractalparam("0 0 640 480 0.2 0.0 0.45 0.25"));
+        cook_args.task_queue->push_front(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
+        cook_args.task_queue->push_front(string2fractalparam("0 0 640 480 0.2 0.0 0.45 0.25"));
 
         cook_data cook_args2;
         cook_args2.task_queue = std::make_shared<QUEUE_TYPE>();
-        cook_args2.task_queue->push(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
-        cook_args2.task_queue->push(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
+        cook_args2.task_queue->push_front(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
+        cook_args2.task_queue->push_front(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
 
         cook_args2.n_threads = 0;
         cook_args2.queue_size = 5;
@@ -69,7 +69,7 @@ TEST_CASE("cook_data Comparator"){
     SUBCASE("Queue size"){
         cook_data cook_args2;
         cook_args2.task_queue = std::make_shared<QUEUE_TYPE>();
-        cook_args2.task_queue->push(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
+        cook_args2.task_queue->push_front(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
         cook_args2.n_threads = 0;
         cook_args2.queue_size = 5;
         cook_args2.completed_tasks = 3;

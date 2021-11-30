@@ -1,11 +1,11 @@
-// #include "doctest.h"
+#include "doctest.h"
 
-// #include "mandel-tiles-graphic.h"
-// #include "parsing.h"
-// #include "tasks.h"
+#include "mandel-tiles-graphic.h"
+#include "parsing.h"
+#include "tasks.h"
 
-// #include <pthread.h>
-// #include <queue>
+#include <pthread.h>
+#include <queue>
 
 
 // TEST_CASE("Cook and N workers - general case "){
@@ -74,34 +74,34 @@
 //     pthread_structs_destroy();
 // }
 
-// TEST_CASE("Worker/Queue ratio test "){
-//     pthread_structs_init();
+TEST_CASE("Worker/Queue ratio test "){
+    pthread_structs_init();
 
-//     int ret;
-//     pthread_t cook;
-//     cook_data cook_args;
+    int ret;
+    pthread_t cook;
+    cook_data cook_args;
 
-//     // Fill arguments (with mutex)
-//     pthread_mutex_lock(&queue_access);
-//     cook_args.task_queue = std::make_shared<QUEUE_TYPE>();
-//     cook_args.n_threads = 1;
-//     cook_args.queue_size = 5;
-//     cook_args.filename = "mandelbrot_tasks/t";
-//     CHECK(cook_args.task_queue->empty());
-//     pthread_mutex_unlock(&queue_access);
+    // Fill arguments (with mutex)
+    pthread_mutex_lock(&queue_access);
+    cook_args.task_queue = std::make_shared<QUEUE_TYPE>();
+    cook_args.n_threads = 1;
+    cook_args.queue_size = 5;
+    cook_args.filename = "mandelbrot_tasks/t";
+    CHECK(cook_args.task_queue->empty());
+    pthread_mutex_unlock(&queue_access);
 
-//     // Create cook thread
-//     ret = pthread_create(&cook, NULL, cook_thread, (void *)&cook_args);
-//     if(ret){ throw "Failed to create thread"; }
+    // Create cook thread
+    ret = pthread_create(&cook, NULL, cook_thread, (void *)&cook_args);
+    if(ret){ throw "Failed to create thread"; }
     
-//     // Wait for it to finish
-//     void* tmp_ret;
-//     ret = pthread_join(cook, &tmp_ret);
-//     ret = *((int*) tmp_ret);
-//     free(tmp_ret);
+    // Wait for it to finish
+    void* tmp_ret;
+    ret = pthread_join(cook, &tmp_ret);
+    ret = *((int*) tmp_ret);
+    free(tmp_ret);
 
-//     // Check failure exit (error ratio)
-//     CHECK(ret == EXIT_FAILURE);
+    // Check failure exit (error ratio)
+    CHECK(ret == EXIT_FAILURE);
 
-//     pthread_structs_destroy();
-// }
+    pthread_structs_destroy();
+}
