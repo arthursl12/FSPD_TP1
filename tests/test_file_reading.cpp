@@ -56,9 +56,7 @@ TEST_CASE("readFromFile N - try reading already EOF'd file"){
     bool res = readFromFile(output, infile, 5);
     output.clear();
     res = readFromFile(output, infile, 5);
-    std::cout << "res: " << res << std::endl;
-
-    std::cout << "L(out): " << output.size() << "; L(in): " << correct.size() << std::endl;
+    
     CHECK(equalVector(output, correct));
     CHECK(res);
 }
