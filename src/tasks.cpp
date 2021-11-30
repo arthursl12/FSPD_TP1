@@ -134,7 +134,16 @@ bool equalCookData(cook_data& cd1, cook_data& cd2){
     
     // 2) Element-wise must be same
     // The sizes must be the same to get here
-    /* TODO */
+    for (uint i = 0; i < cd1.task_queue->size(); i++){
+        // Deque access time is constant
+        if(!fractalParamComparator(cd1.task_queue->at(i), 
+                                  cd2.task_queue->at(i)))
+        {
+            return false;
+        }
+    }
+
+
     return true;
     
 
