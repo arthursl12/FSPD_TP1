@@ -40,6 +40,5 @@ inline bool equalVector(std::vector<std::shared_ptr<fractal_param_t>>& vec1,
     return true;
 }
 
-
 #endif /* VECTOR_OPS */
 

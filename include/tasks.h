@@ -27,9 +27,14 @@ typedef struct cook_data {
     int completed_tasks;
 } cook_data;
 
+void pthread_structs_init();
+void pthread_structs_destroy();
+
 void* cook_thread(void* data);
 void createEOWList(std::vector<std::shared_ptr<fractal_param_t>>& output, 
                    int n_threads);
-
+void cookDataConstructor(cook_data& out, int n_threads, 
+                         int queue_size, std::string filename);
+bool equalCookData(cook_data& cd1, cook_data& cd2);
 
 #endif /* TASKS_H */
