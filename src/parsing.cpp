@@ -94,7 +94,7 @@ void double_tok_parsing(double& out, std::string& str, std::string delim){
             out = std::stod(token); 
             str.clear();
         }catch (std::exception& e){
-            throw "Int Parsing Failed";
+            throw "Double Parsing Failed";
         }
     }
 }

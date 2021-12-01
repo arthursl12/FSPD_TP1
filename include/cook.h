@@ -36,5 +36,6 @@ void createEOWList(std::vector<std::shared_ptr<fractal_param_t>>& output,
 void cookDataConstructor(cook_data& out, int n_threads, 
                          int queue_size, std::string filename);
 bool equalCookData(cook_data& cd1, cook_data& cd2);
+bool equalQueues(QUEUE_TYPE& q1, QUEUE_TYPE& q2);
 
 #endif /* COOK_H */

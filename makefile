@@ -6,7 +6,7 @@ BUILDDIR := build
 TARGET := main
 
 SRCEXT := cpp
-CXXFLAGS := -g -Wall 
+CXXFLAGS := -ftest-coverage -fprofile-arcs -g -Wall 
 LIBS := -lpthread
 INC := -I include -I third-party
 
@@ -48,7 +48,7 @@ $(TARGET).o: $(OBJDIR)
 # 	@echo ""
 
 # make tester: compila e roda todos os testes da pasta tests
-tester: $(TARGET).o
+tester: $(TARGET).o 
 	$(shell mkdir -p $(TESTDIR))
 	$(shell mkdir -p $(TESTSBINDIR))
 	@echo TESTES:
@@ -75,6 +75,7 @@ lcov:
 	$(shell genhtml -q coverage.info --output-directory lcov_report)
 	$(RM) *.cpp.gcov
 	$(RM) *.gcov
+	$(RM) *.gcno
 	$(RM) coverage.info
 
 

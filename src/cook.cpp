@@ -86,7 +86,7 @@ void createEOWList(std::vector<std::shared_ptr<fractal_param_t>>& output,
 Fills attributes of cook_data struct using passed parameters. 
 
 If 'queue_size' is -1, it will be set to 4 times the qtd of threads
-(factor defined in 'tasks.h')
+(factor defined in 'cook.h')
 */
 void cookDataConstructor(cook_data& out, int n_threads, 
                          int queue_size, std::string filename)
@@ -104,12 +104,38 @@ void cookDataConstructor(cook_data& out, int n_threads,
 }
 
 /*
+Checks if two task queues (STL deque) are equal, content-wise as well.  
+*/
+bool equalQueues(QUEUE_TYPE& q1, QUEUE_TYPE& q2){
+    // Verify queues
+    // 1) Sizes must be same
+    bool queuesEqual = true;
+    queuesEqual = queuesEqual && \
+                    (q1.size() == q2.size());
+    if (!queuesEqual){
+        return false;
+    }
+    
+    // 2) Element-wise must be same
+    // The sizes must be the same to get here
+    for (uint i = 0; i < q1.size(); i++){
+        // Deque access time is constant
+        if(!fractalParamComparator(q1.at(i), 
+                                   q2.at(i)))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+/*
 Checks if two cook_data structures are equal, i.e., they have the same 
 attribute's values. For complex structures (like STL queues), they are compared
 element-to-element.
 */
 bool equalCookData(cook_data& cd1, cook_data& cd2){
-    // Verify primitive attributes
+    // Verify primitive attributes are equal
     bool simpleEqual = true;
     if ((cd1.completed_tasks != cd2.completed_tasks) || 
         (cd1.created_tasks != cd2.created_tasks) ||
@@ -123,26 +149,10 @@ bool equalCookData(cook_data& cd1, cook_data& cd2){
         return false;
     }
 
-    // Verify queues
-    // 1) Sizes must be same
-    bool queuesEqual = true;
-    queuesEqual = queuesEqual && \
-                    (cd1.task_queue->size() == cd2.task_queue->size());
-    if (!queuesEqual){
+    // Verify queues are equal
+    if (!equalQueues(*cd1.task_queue, *cd2.task_queue)){
         return false;
     }
-    
-    // 2) Element-wise must be same
-    // The sizes must be the same to get here
-    for (uint i = 0; i < cd1.task_queue->size(); i++){
-        // Deque access time is constant
-        if(!fractalParamComparator(cd1.task_queue->at(i), 
-                                  cd2.task_queue->at(i)))
-        {
-            return false;
-        }
-    }
-
 
     return true;
     
