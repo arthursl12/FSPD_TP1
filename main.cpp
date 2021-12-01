@@ -1,6 +1,6 @@
 #include <iostream>
 #include "mandel-tiles-graphic.h"
-#include "tasks.h"
+#include "cook.h"
 
 /****************************************************************
  * Essa versao do programa, sequencial le a descricao de um bloco

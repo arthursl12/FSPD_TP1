@@ -3,7 +3,7 @@
 #include "mandel-tiles-graphic.h"
 #include "parsing.h"
 #include "vector_ops.h"
-#include "tasks.h"
+#include "cook.h"
 
 #include <queue>
 
