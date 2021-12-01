@@ -53,7 +53,7 @@ tester: $(TARGET).o
 	$(shell mkdir -p $(TESTSBINDIR))
 	@echo TESTES:
 	$(CXX) $(INC) $(CXXFLAGS) $(TESTS1) $(OBJDIR) $(LIBS) -o $(TESTSBINDIR)/$(patsubst %.o,%,$(notdir $@))
-	$(TESTSBINDIR)/$(patsubst %.o,%,$(notdir $@))
+	-$(TESTSBINDIR)/$(patsubst %.o,%,$(notdir $@))
 	$(RM) test_*.gcno
 	$(RM) test_*.gcda
 	@echo ""

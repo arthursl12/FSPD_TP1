@@ -53,7 +53,7 @@ TEST_CASE("Worker - Simple queue"){
     // Fill queue
     pthread_mutex_lock(&queue_access);
     std::shared_ptr<QUEUE_TYPE> q1 = std::make_shared<QUEUE_TYPE>();
-    q1->push_back(string2fractalparam("0 0 640 480 0.270920 0.004749 0.270921 0.004750"));
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
     q1->push_back(generateEOW());
     worker_data worker_args(q1);
     pthread_mutex_unlock(&queue_access);
@@ -141,9 +141,9 @@ TEST_CASE("Worker - Refill queue"){
 
     pthread_mutex_lock(&queue_access);
     std::shared_ptr<QUEUE_TYPE> q1 = std::make_shared<QUEUE_TYPE>();
-    q1->push_back(string2fractalparam("0 0 640 480 0.270920 0.004749 0.270921 0.004750"));
-    q1->push_back(string2fractalparam("0 0 640 480 0.270920 0.004749 0.270921 0.004750"));
-    q1->push_back(string2fractalparam("0 0 640 480 0.270920 0.004749 0.270921 0.004750"));
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
     worker_data worker_args(q1);
     pthread_mutex_unlock(&queue_access);
     
@@ -158,8 +158,8 @@ TEST_CASE("Worker - Refill queue"){
     pthread_cond_wait(&cook_needed, &queue_access);
     CHECK(q1->empty());
     CHECK(equalQueues(*worker_args.task_queue, *q1));
-    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
-    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    q1->push_back(string2fractalparam("160 120 80 60 0.2709202500 0.0047492500 0.2709203750 0.0047493750"));
+    q1->push_back(string2fractalparam("160 120 80 60 0.2709202500 0.0047492500 0.2709203750 0.0047493750"));
     pthread_cond_broadcast(&pot_filled);
     pthread_mutex_unlock(&queue_access);
 
@@ -206,9 +206,9 @@ TEST_CASE("Worker - Refill queue including EOW"){
 
     pthread_mutex_lock(&queue_access);
     std::shared_ptr<QUEUE_TYPE> q1 = std::make_shared<QUEUE_TYPE>();
-    q1->push_back(string2fractalparam("0 0 640 480 0.270920 0.004749 0.270921 0.004750"));
-    q1->push_back(string2fractalparam("0 0 640 480 0.270920 0.004749 0.270921 0.004750"));
-    q1->push_back(string2fractalparam("0 0 640 480 0.270920 0.004749 0.270921 0.004750"));
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
     worker_data worker_args(q1);
     pthread_mutex_unlock(&queue_access);
     
@@ -223,8 +223,8 @@ TEST_CASE("Worker - Refill queue including EOW"){
     pthread_cond_wait(&cook_needed, &queue_access);
     CHECK(q1->empty());
     CHECK(equalQueues(*worker_args.task_queue, *q1));
-    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
-    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    q1->push_back(string2fractalparam("160 120 80 60 0.2709202500 0.0047492500 0.2709203750 0.0047493750"));
+    q1->push_back(string2fractalparam("160 120 80 60 0.2709202500 0.0047492500 0.2709203750 0.0047493750"));
     q1->push_back(generateEOW());
     pthread_cond_broadcast(&pot_filled);
     pthread_mutex_unlock(&queue_access);

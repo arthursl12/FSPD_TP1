@@ -1,4 +1,6 @@
 #include "worker.h"
+#include <sys/time.h>
+#include <iostream>
 
 worker_data::worker_data(std::shared_ptr<QUEUE_TYPE> queue_ptr)
     : qtd_worker_jobs(0)
@@ -26,10 +28,19 @@ void* worker_thread(void* data){
         // Do work out of critical section
         if (isEOW(task)){
             foundEOW = true;
+            std::cout << "Found EOW " << pthread_self() << std::endl;
         }else{
             // Do work
-            // TODO: get times and store it somehow
+            struct timeval  tv1, tv2;
+
+            gettimeofday(&tv1, NULL);
             fractal(task.get());
+            gettimeofday(&tv2, NULL);
+
+            args->qtd_worker_jobs += 1;
+            double total_time = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
+                                (double) (tv2.tv_sec - tv1.tv_sec);
+            std::cout << "Task completed in " << total_time << " seconds." << std::endl;
         }
     }
 
