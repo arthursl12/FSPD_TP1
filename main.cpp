@@ -43,37 +43,84 @@ int main (int argc, char* argv[]){
 
 	pthread_structs_init();
 
+    int N = 4;
+    int queue_size = MAX_QUEUE_WORKERS_RATIO*N;
+
     pthread_mutex_lock(&queue_access);
     std::shared_ptr<QUEUE_TYPE> q1 = std::make_shared<QUEUE_TYPE>();
-    q1->push_back(generateEOW());
-    worker_data worker_args(q1);
+    for (int i = 0; i < queue_size; i++){
+        q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    }
     pthread_mutex_unlock(&queue_access);
 
-    // Create worker thread
+    // Create worker threads
     int ret;
-    pthread_t worker;
-    ret = pthread_create(&worker, NULL, worker_thread, (void *)&worker_args);
-    if(ret){ throw "Failed to create thread"; }
+    pthread_t* workers = (pthread_t*) malloc(N*sizeof(pthread_t));
+    worker_data* workers_args = (worker_data*) malloc(N*sizeof(worker_data));
+    for (int i = 0; i < N; i++){
+        workers_args[i] = worker_data(q1);
+    }
+    for (int i = 0; i < N; i++){
+        ret = pthread_create(&workers[i], NULL, worker_thread, 
+                             (void*)&workers_args[i]);
+        if(ret){ throw "Failed to create thread"; }
+    }
 
-    // Wait for it to finish
-    void* tmp_ret;
-    ret = pthread_join(worker, &tmp_ret);
-    ret = *((int*) tmp_ret);
-    free(tmp_ret);
+    // 'Cook' refilling pot with more tasks and a final EOW
+    pthread_mutex_lock(&queue_access);
+    pthread_cond_wait(&cook_needed, &queue_access);
+    // CHECK(q1->empty());
+    // for (int i = 0; i < N; i++){
+    //     CHECK(equalQueues(*(workers_args[i].task_queue), *q1));
+    // }
+    for (int i = 0; i < queue_size-1; i++){
+        q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    }
+    q1->push_back(generateEOW());
+    pthread_cond_broadcast(&pot_filled);
+    pthread_mutex_unlock(&queue_access);
 
-    // Check sucess exit
-    ret == EXIT_SUCCESS;
+    // Second fill, only with EOW
+    pthread_mutex_lock(&queue_access);
+    pthread_cond_wait(&cook_needed, &queue_access);
+    for (int i = 0; i < N-1; i++){
+        q1->push_back(generateEOW());
+    }
+    pthread_cond_broadcast(&pot_filled);
+    pthread_mutex_unlock(&queue_access);
 
-    // Check equal queues
+    // Wait for them to finish
+    // sleep(1);
+
+    for (int i = 0; i < N; i++){
+        void* tmp_ret;
+        ret = pthread_join(workers[i], &tmp_ret);
+        ret = *((int*) tmp_ret);
+        // CHECK(ret == EXIT_SUCCESS);
+        free(tmp_ret);
+    }
+    
+
     pthread_mutex_lock(&queue_access);
     QUEUE_TYPE q2;
-    equalQueues(*worker_args.task_queue, *q1);
-    equalQueues(*worker_args.task_queue, q2);
+    // CHECK(q1->empty());
+    // for (int i = 0; i < N; i++){
+    //     CHECK(equalQueues(*(workers_args[i].task_queue), *q1));
+    //     CHECK(equalQueues(*(workers_args[i].task_queue), q2));
+    // }
     pthread_mutex_unlock(&queue_access);
 
-    worker_args.qtd_worker_jobs == 0;
+    int total_works_done = 0;
+    for (int i = 0; i < N; i++){
+        total_works_done += workers_args[i].qtd_worker_jobs;
+        std::cout << workers[i] << ": " << workers_args[i].qtd_worker_jobs << std::endl;
+        // CHECK(workers_args[i].qtd_worker_jobs <= 10);
+    }
+    // CHECK(total_works_done == 10);
 
     pthread_structs_destroy();
+    free(workers);
+    free(workers_args);
 
 	return 0;
 }

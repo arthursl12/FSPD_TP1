@@ -37,15 +37,15 @@ $(TARGET).o: $(OBJDIR)
 # make tester: compila e roda todos os testes da pasta tests
 # make tests/test_[nome].o : compila esse teste específico
 # tester: $(TESTS2)
-# $(TESTS2): %.o : %.cpp | $(TARGET).o
-# 	$(shell mkdir -p $(TESTDIR))
-# 	$(shell mkdir -p $(TESTSBINDIR))
-# 	@echo TESTE: $<
-# 	$(CXX) $(INC) $(CXXFLAGS) $< $(OBJDIR) $(LIBS) -o $(TESTSBINDIR)/$(patsubst %.o,%,$(notdir $@))
-# 	$(TESTSBINDIR)/$(patsubst %.o,%,$(notdir $@))
-# 	$(RM) test_*.gcno
-# 	$(RM) test_*.gcda
-# 	@echo ""
+$(TESTS2): %.o : %.cpp | $(TARGET).o
+	$(shell mkdir -p $(TESTDIR))
+	$(shell mkdir -p $(TESTSBINDIR))
+	@echo TESTE: $<
+	$(CXX) $(INC) $(CXXFLAGS) $< tests/test_1.cpp $(OBJDIR) $(LIBS) -o $(TESTSBINDIR)/$(patsubst %.o,%,$(notdir $@))
+	-$(TESTSBINDIR)/$(patsubst %.o,%,$(notdir $@))
+	$(RM) test_*.gcno
+	$(RM) test_*.gcda
+	@echo ""
 
 # make tester: compila e roda todos os testes da pasta tests
 tester: $(TARGET).o 
