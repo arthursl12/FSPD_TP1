@@ -21,6 +21,24 @@ void pthread_structs_destroy(){
 	pthread_mutex_destroy(&queue_access);
 }
 
+/*
+Fills attributes of cook_data struct using passed parameters. 
+
+If 'queue_size' is -1, it will be set to 4 times the qtd of threads
+(factor defined in 'cook.h')
+*/
+cook_data::cook_data(int n_threads, int queue_size, std::string filename)
+    : n_threads(n_threads), filename(filename), 
+      completed_tasks(0), created_tasks(0)
+{
+    if (queue_size == -1){
+        this->queue_size = MAX_QUEUE_WORKERS_RATIO*n_threads;
+    }else{
+        this->queue_size = queue_size;
+    }
+    this->task_queue = std::make_shared<QUEUE_TYPE>();
+}
+
 void* cook_thread(void* data){
     // Getting the parameters passed
     cook_data* args = (cook_data*) data;
@@ -80,27 +98,6 @@ void createEOWList(std::vector<std::shared_ptr<fractal_param_t>>& output,
     for (int i = 0; i < n_threads; i++){
         output.push_back(generateEOW());
     }
-}
-
-/*
-Fills attributes of cook_data struct using passed parameters. 
-
-If 'queue_size' is -1, it will be set to 4 times the qtd of threads
-(factor defined in 'cook.h')
-*/
-void cookDataConstructor(cook_data& out, int n_threads, 
-                         int queue_size, std::string filename)
-{
-    out.completed_tasks = 0;
-    out.created_tasks = 0;
-    out.filename = filename;
-    out.n_threads = n_threads;
-    if (queue_size == -1){
-        out.queue_size = MAX_QUEUE_WORKERS_RATIO*n_threads;
-    }else{
-        out.queue_size = queue_size;
-    }
-    out.task_queue = std::make_shared<QUEUE_TYPE>();
 }
 
 /*

@@ -8,114 +8,71 @@
 #include <queue>
 
 TEST_CASE("cook_data Comparator"){
-    cook_data cook_args;
-    cook_args.task_queue = std::make_shared<QUEUE_TYPE>();
-    cook_args.n_threads = 0;
-    cook_args.queue_size = 5;
+    cook_data cook_args(0, 5, "mandelbrot_tasks/t");
     cook_args.completed_tasks = 3;
     cook_args.created_tasks = 15;
-    cook_args.filename = "mandelbrot_tasks/t";
 
     SUBCASE("Equal"){
-        cook_data cook_args2;
-        cook_args2.task_queue = std::make_shared<QUEUE_TYPE>();
-        cook_args2.n_threads = 0;
-        cook_args2.queue_size = 5;
+        cook_data cook_args2(0, 5, "mandelbrot_tasks/t");
         cook_args2.completed_tasks = 3;
         cook_args2.created_tasks = 15;
-        cook_args2.filename = "mandelbrot_tasks/t";
-
         CHECK(equalCookData(cook_args, cook_args2));
     }
     SUBCASE("N_threads"){
-        cook_data cook_args2;
-        cook_args2.task_queue = std::make_shared<QUEUE_TYPE>();
-        cook_args2.n_threads = 2;
-        cook_args2.queue_size = 5;
+        cook_data cook_args2(2, 5, "mandelbrot_tasks/t");
         cook_args2.completed_tasks = 3;
         cook_args2.created_tasks = 15;
-        cook_args2.filename = "mandelbrot_tasks/t";
-
         CHECK_FALSE(equalCookData(cook_args, cook_args2));
     }
     SUBCASE("queue_size"){
-        cook_data cook_args2;
-        cook_args2.task_queue = std::make_shared<QUEUE_TYPE>();
-        cook_args2.n_threads = 0;
-        cook_args2.queue_size = 10;
+        cook_data cook_args2(0, 10, "mandelbrot_tasks/t");
         cook_args2.completed_tasks = 3;
         cook_args2.created_tasks = 15;
-        cook_args2.filename = "mandelbrot_tasks/t";
-
         CHECK_FALSE(equalCookData(cook_args, cook_args2));
     }
     SUBCASE("Queue content"){
         cook_args.task_queue->push_front(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
         cook_args.task_queue->push_front(string2fractalparam("0 0 640 480 0.2 0.0 0.45 0.25"));
 
-        cook_data cook_args2;
+        cook_data cook_args2(0, 5, "mandelbrot_tasks/t");
         cook_args2.task_queue = std::make_shared<QUEUE_TYPE>();
         cook_args2.task_queue->push_front(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
         cook_args2.task_queue->push_front(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
-
-        cook_args2.n_threads = 0;
-        cook_args2.queue_size = 5;
         cook_args2.completed_tasks = 3;
         cook_args2.created_tasks = 15;
-        cook_args2.filename = "mandelbrot_tasks/t";
-
         CHECK_FALSE(equalCookData(cook_args, cook_args2));
     }
     SUBCASE("Queue size"){
-        cook_data cook_args2;
+        cook_data cook_args2(0, 5, "mandelbrot_tasks/t");
         cook_args2.task_queue = std::make_shared<QUEUE_TYPE>();
         cook_args2.task_queue->push_front(string2fractalparam("0 0 640 480 0.268 0.002 0.272 0.006"));
-        cook_args2.n_threads = 0;
-        cook_args2.queue_size = 5;
         cook_args2.completed_tasks = 3;
         cook_args2.created_tasks = 15;
-        cook_args2.filename = "mandelbrot_tasks/t";
-
         CHECK_FALSE(equalCookData(cook_args, cook_args2));
     }
     SUBCASE("File"){
-        cook_data cook_args2;
-        cook_args2.task_queue = std::make_shared<QUEUE_TYPE>();
-        cook_args2.n_threads = 0;
-        cook_args2.queue_size = 5;
+        cook_data cook_args2(0, 5, "mandelbrot_tasks/z1");
         cook_args2.completed_tasks = 3;
         cook_args2.created_tasks = 15;
-        cook_args2.filename = "mandelbrot_tasks/z1";
-
         CHECK_FALSE(equalCookData(cook_args, cook_args2));
     }
     SUBCASE("Completed tasks"){
-        cook_data cook_args2;
-        cook_args2.task_queue = std::make_shared<QUEUE_TYPE>();
-        cook_args2.n_threads = 0;
-        cook_args2.queue_size = 5;
+        cook_data cook_args2(0, 5, "mandelbrot_tasks/t");
         cook_args2.completed_tasks = 15;
         cook_args2.created_tasks = 15;
-        cook_args2.filename = "mandelbrot_tasks/z1";
-
         CHECK_FALSE(equalCookData(cook_args, cook_args2));
     }
     SUBCASE("Created Tasks"){
-        cook_data cook_args2;
-        cook_args2.task_queue = std::make_shared<QUEUE_TYPE>();
-        cook_args2.n_threads = 0;
-        cook_args2.queue_size = 5;
+        cook_data cook_args2(0, 5, "mandelbrot_tasks/t");
         cook_args2.completed_tasks = 3;
         cook_args2.created_tasks = 3;
-        cook_args2.filename = "mandelbrot_tasks/z1";
-
         CHECK_FALSE(equalCookData(cook_args, cook_args2));
     }
 }
 
 TEST_CASE("cook_data Constructor"){
     SUBCASE("Base"){
-        cook_data cook_args;
+        cook_data cook_args(0, 0, "");
         cook_args.task_queue = std::make_shared<QUEUE_TYPE>();
         cook_args.n_threads = 0;
         cook_args.queue_size = 5;
@@ -123,12 +80,11 @@ TEST_CASE("cook_data Constructor"){
         cook_args.completed_tasks = 0;
         cook_args.created_tasks = 0;
 
-        cook_data cook_args2;
-        cookDataConstructor(cook_args2, 0, 5, "mandelbrot_tasks/t");
+        cook_data cook_args2(0, 5, "mandelbrot_tasks/t");
         CHECK(equalCookData(cook_args, cook_args2));
     }
     SUBCASE("Default queue_size"){
-        cook_data cook_args;
+        cook_data cook_args(0, 0, "");
         cook_args.task_queue = std::make_shared<QUEUE_TYPE>();
         cook_args.n_threads = 4;
         cook_args.queue_size = 16;
@@ -136,8 +92,7 @@ TEST_CASE("cook_data Constructor"){
         cook_args.completed_tasks = 0;
         cook_args.created_tasks = 0;
         
-        cook_data cook_args2;
-        cookDataConstructor(cook_args2, 4, -1, "mandelbrot_tasks/t");
+        cook_data cook_args2(4, -1, "mandelbrot_tasks/t");
         CHECK(equalCookData(cook_args, cook_args2));
     }
 }
@@ -175,14 +130,10 @@ TEST_CASE("Cook and 0 workers "){
 
     int ret;
     pthread_t cook;
-    cook_data cook_args;
 
     // Fill arguments (with mutex)
     pthread_mutex_lock(&queue_access);
-    cook_args.task_queue = std::make_shared<QUEUE_TYPE>();
-    cook_args.n_threads = 0;
-    cook_args.queue_size = 5;
-    cook_args.filename = "mandelbrot_tasks/t";
+    cook_data cook_args(0,5, "mandelbrot_tasks/t");
     CHECK(cook_args.task_queue->empty());
     pthread_mutex_unlock(&queue_access);
 

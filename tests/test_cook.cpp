@@ -79,14 +79,10 @@ TEST_CASE("Worker/Queue ratio test "){
 
     int ret;
     pthread_t cook;
-    cook_data cook_args;
 
     // Fill arguments (with mutex)
     pthread_mutex_lock(&queue_access);
-    cook_args.task_queue = std::make_shared<QUEUE_TYPE>();
-    cook_args.n_threads = 1;
-    cook_args.queue_size = 5;
-    cook_args.filename = "mandelbrot_tasks/t";
+    cook_data cook_args(1, 5, "mandelbrot_tasks/t");
     CHECK(cook_args.task_queue->empty());
     pthread_mutex_unlock(&queue_access);
 
