@@ -1,6 +1,8 @@
 #include "cook.h"
 #include "parsing.h"
+#include "worker.h"
 
+#include <assert.h>     
 #include <iostream>
 
 pthread_cond_t cook_needed;
@@ -69,26 +71,89 @@ void* cook_thread(void* data){
         args->task_queue->push_back(fp_ptr);
         args->created_tasks++;
     }
+    pthread_mutex_unlock(&queue_access);
 
-    bool finishied = false;
-    while (args->n_threads > 0 && !finishied){
-        // TODO: handle eof
-        if (eof){
-            throw "EOF reached!";
-        }
-        
-        pthread_cond_wait(&cook_needed, &queue_access); // Waits and release mutex
-        // Awakes and mutex is locked in this thread again
-        
+    // Create worker threads
+    std::vector<std::shared_ptr<pthread_t>> workers;
+    std::vector<std::shared_ptr<worker_data>> workers_args;
+    for (int i = 0; i < args->n_threads; i++){
+        std::shared_ptr<pthread_t> worker;
+        worker = std::make_shared<pthread_t>();
+        workers.push_back(worker);
 
-        eof = readFromFile(output, infile, args->queue_size);
-
-
-        pthread_cond_signal(&pot_filled); 
+        std::shared_ptr<worker_data> data;
+        data = std::make_shared<worker_data>(args->task_queue);
+        workers_args.push_back(data);
     }
 
-    // Release queue for other uses later
-    pthread_mutex_unlock(&queue_access);
+    // Start threads
+    int ret;
+    for (int i = 0; i < args->n_threads; i++){
+        ret = pthread_create(workers[i].get(), NULL, worker_thread, 
+                             (void*)workers_args[i].get());
+        if(ret){ throw "Failed to create thread"; }
+    }
+
+    bool finishied = false;
+    bool eof_lastfill = eof;          // if last fill reached eof
+    int EOW_left = args->n_threads;   // how many EOW must be put into queue yet
+    while (args->n_threads > 0 && !finishied){
+        pthread_mutex_lock(&queue_access);
+        pthread_cond_wait(&cook_needed, &queue_access); // Waits and release mutex
+        // Awakes and mutex is locked in this thread again
+        if (!eof_lastfill){
+            // There are still tasks in the file
+            eof = readFromFile(output, infile, args->queue_size);
+            // If output is empty, it will skip the loop
+            for (auto task : output){
+                // Guaranteed: output.size() <= queue.size() 
+                args->task_queue->push_back(task);
+                args->created_tasks++;
+            }
+
+            if (eof){
+                // We reached eof this fill, no need to read file more
+                eof_lastfill = true;
+            }
+        }
+        int queue_free_spaces = args->queue_size - args->task_queue->size();
+        if (queue_free_spaces >= EOW_left){
+            // Ideal situation: we can put all EOW's left in this refill
+            // The ideal case is when EOW_left == args->n_threads but works 
+            // it's not true as well
+            for (int i = 0; i < EOW_left; i++){
+                args->task_queue->push_back(generateEOW());
+                EOW_left -= 1;
+            }
+        }else if (queue_free_spaces > 0){
+            // We can put only some EOW's left in this refill
+            // We'll do it and wait for other runs
+            for (int i = 0; i < queue_free_spaces; i++){
+                args->task_queue->push_back(generateEOW());
+                EOW_left -= 1;
+            }
+        }
+
+        pthread_cond_broadcast(&pot_filled);
+        pthread_mutex_unlock(&queue_access);
+
+        if (EOW_left == 0){
+            // The EOWs in queue are the last objective for the cook, we can
+            // end the loop
+            finishied = true;
+        }
+    }
+
+    // Wait for worker threads to end
+    int total_works_done = 0;
+    for (int i = 0; i < args->n_threads; i++){
+        total_works_done += workers_args[i]->qtd_worker_jobs;
+        std::cout << *workers[i] << ": " << workers_args[i]->qtd_worker_jobs << std::endl;
+    }
+    args->completed_tasks = total_works_done;
+
+    // TODO: compute statistics
+
     return EXIT_SUCCESS;
 }
 

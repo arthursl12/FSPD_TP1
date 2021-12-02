@@ -122,8 +122,10 @@ std::shared_ptr<fractal_param_t> string2fractalparam(std::string str){
 
 /*
 Reads N lines from file. Each line is transformed into a pointer to struct
-'fractal_param' and stored into vector 'result', passed as parameter. If the 
-file has less than N lines, it will only read those lines available.
+'fractal_param' and stored into vector 'result', passed as parameter. 
+
+If the file has less than N lines, it will only read those lines available. 
+If the file already reached EOF, output will be an empty vector.
 
 Note: result will be cleared before being filled
 

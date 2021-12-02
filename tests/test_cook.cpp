@@ -7,73 +7,6 @@
 #include <pthread.h>
 #include <queue>
 
-
-// TEST_CASE("Cook and N workers - general case "){
-//     pthread_structs_init();
-
-//     int ret;
-//     pthread_t cook;
-//     cook_data cook_args;
-
-//     // Fill arguments (with mutex)
-//     pthread_mutex_lock(&queue_access);
-//     cook_args.task_queue = std::make_shared<QUEUE_TYPE>();
-//     cook_args.n_threads = 2;
-//     cook_args.queue_size = 8;
-//     cook_args.filename = "mandelbrot_tasks/t";
-//     pthread_mutex_unlock(&queue_access);
-
-//     // Create cook thread
-//     ret = pthread_create(&cook, NULL, cook_thread, (void *)&cook_args);
-//     if(ret){ throw "Failed to create thread"; }
-    
-//     // Wait for it to finish
-//     ret = pthread_join(cook, NULL);
-
-//     // Test results (with mutex)
-//     pthread_mutex_lock(&queue_access);
-//     CHECK(cook_args.task_queue->empty());
-//     CHECK(cook_args.task_queue->size() == 0);
-//     CHECK(cook_args.created_tasks == 64);
-//     CHECK(cook_args.completed_tasks == 64);
-//     pthread_mutex_unlock(&queue_access);
-
-//     pthread_structs_destroy();
-// }
-
-// TEST_CASE("Cook and N workers - equal size queue "){
-//     pthread_structs_init();
-
-//     int ret;
-//     pthread_t cook;
-//     cook_data cook_args;
-
-//     // Fill arguments (with mutex)
-//     pthread_mutex_lock(&queue_access);
-//     cook_args.task_queue = std::make_shared<QUEUE_TYPE>();
-//     cook_args.n_threads = 4;
-//     cook_args.queue_size = 4;
-//     cook_args.filename = "mandelbrot_tasks/t";
-//     pthread_mutex_unlock(&queue_access);
-
-//     // Create cook thread
-//     ret = pthread_create(&cook, NULL, cook_thread, (void *)&cook_args);
-//     if(ret){ throw "Failed to create thread"; }
-    
-//     // Wait for it to finish
-//     ret = pthread_join(cook, NULL);
-
-//     // Test results (with mutex)
-//     pthread_mutex_lock(&queue_access);
-//     CHECK(cook_args.task_queue->empty());
-//     CHECK(cook_args.task_queue->size() == 0);
-//     CHECK(cook_args.created_tasks == 64);
-//     CHECK(cook_args.completed_tasks == 64);
-//     pthread_mutex_unlock(&queue_access);
-
-//     pthread_structs_destroy();
-// }
-
 TEST_CASE("Worker/Queue ratio test "){
     pthread_structs_init();
 
@@ -101,3 +34,132 @@ TEST_CASE("Worker/Queue ratio test "){
 
     pthread_structs_destroy();
 }
+
+TEST_CASE("Cook and N workers - File EOW equal to size "){
+    /*
+    After refill, only EOW will be found in queue
+    */
+    pthread_structs_init();
+
+    int ret;
+    pthread_t cook;
+
+    // Fill arguments (with mutex)
+    pthread_mutex_lock(&queue_access);
+    cook_data cook_args(2,8,"mandelbrot_tasks/z2");
+    pthread_mutex_unlock(&queue_access);
+
+    // Create cook thread
+    ret = pthread_create(&cook, NULL, cook_thread, (void *)&cook_args);
+    if(ret){ throw "Failed to create thread"; }
+    
+    // Wait for it to finish
+    ret = pthread_join(cook, NULL);
+
+    // Test results (with mutex)
+    pthread_mutex_lock(&queue_access);
+    CHECK(cook_args.task_queue->empty());
+    CHECK(cook_args.task_queue->size() == 0);
+    CHECK(cook_args.created_tasks == 8);
+    CHECK(cook_args.completed_tasks == 8);
+    pthread_mutex_unlock(&queue_access);
+
+    pthread_structs_destroy();
+}
+
+TEST_CASE("Cook and N workers - Refills and then EOW "){
+    /*
+    Some refills and then an EOW
+    */
+    pthread_structs_init();
+
+    int ret;
+    pthread_t cook;
+
+    // Fill arguments (with mutex)
+    pthread_mutex_lock(&queue_access);
+    cook_data cook_args(2,3,"mandelbrot_tasks/z2");
+    pthread_mutex_unlock(&queue_access);
+
+    // Create cook thread
+    ret = pthread_create(&cook, NULL, cook_thread, (void *)&cook_args);
+    if(ret){ throw "Failed to create thread"; }
+    
+    // Wait for it to finish
+    ret = pthread_join(cook, NULL);
+
+    // Test results (with mutex)
+    pthread_mutex_lock(&queue_access);
+    CHECK(cook_args.task_queue->empty());
+    CHECK(cook_args.task_queue->size() == 0);
+    CHECK(cook_args.created_tasks == 8);
+    CHECK(cook_args.completed_tasks == 8);
+    pthread_mutex_unlock(&queue_access);
+
+    pthread_structs_destroy();
+}
+
+TEST_CASE("Cook and N workers - Refills and then EOW 2 "){
+    /*
+    Some refills and then an EOW
+    */
+    pthread_structs_init();
+
+    int ret;
+    pthread_t cook;
+
+    // Fill arguments (with mutex)
+    pthread_mutex_lock(&queue_access);
+    cook_data cook_args(2,4,"mandelbrot_tasks/z2");
+    pthread_mutex_unlock(&queue_access);
+
+    // Create cook thread
+    ret = pthread_create(&cook, NULL, cook_thread, (void *)&cook_args);
+    if(ret){ throw "Failed to create thread"; }
+    
+    // Wait for it to finish
+    ret = pthread_join(cook, NULL);
+
+    // Test results (with mutex)
+    pthread_mutex_lock(&queue_access);
+    CHECK(cook_args.task_queue->empty());
+    CHECK(cook_args.task_queue->size() == 0);
+    CHECK(cook_args.created_tasks == 8);
+    CHECK(cook_args.completed_tasks == 8);
+    pthread_mutex_unlock(&queue_access);
+
+    pthread_structs_destroy();
+}
+
+TEST_CASE("Cook and N workers - Some EOW, more after refill "){
+    /*
+    After refill, some EOW will be found in queue, another refill is needed
+    */
+    pthread_structs_init();
+
+    int ret;
+    pthread_t cook;
+
+    // Fill arguments (with mutex)
+    pthread_mutex_lock(&queue_access);
+    cook_data cook_args(3,3,"mandelbrot_tasks/z2");
+    pthread_mutex_unlock(&queue_access);
+
+    // Create cook thread
+    ret = pthread_create(&cook, NULL, cook_thread, (void *)&cook_args);
+    if(ret){ throw "Failed to create thread"; }
+    
+    // Wait for it to finish
+    ret = pthread_join(cook, NULL);
+
+    // Test results (with mutex)
+    pthread_mutex_lock(&queue_access);
+    CHECK(cook_args.task_queue->empty());
+    CHECK(cook_args.task_queue->size() == 0);
+    CHECK(cook_args.created_tasks == 8);
+    CHECK(cook_args.completed_tasks == 8);
+    pthread_mutex_unlock(&queue_access);
+
+    pthread_structs_destroy();
+}
+
