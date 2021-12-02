@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <iostream>
+#include <sys/time.h>
 
 TEST_CASE("Worker - EOW only queue"){
     pthread_structs_init();
@@ -258,16 +259,73 @@ TEST_CASE("Worker - Refill queue including EOW"){
     pthread_structs_destroy();
 }
 
+/* TODO: statistics testing */
+TEST_CASE("Worker - Statistics 1 task"){
+    pthread_structs_init();
 
-
-// TEST_CASE("Worker - Change queue outside"){
-//     pthread_structs_init();
-//     worker_args.task_queue = std::make_shared<QUEUE_TYPE>();
-//     std::shared_ptr<QUEUE_TYPE> q1;
-
+    // Fill queue
+    pthread_mutex_lock(&queue_access);
+    std::shared_ptr<QUEUE_TYPE> q1 = std::make_shared<QUEUE_TYPE>();
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    q1->push_back(generateEOW());
+    worker_data worker_args(q1);
+    pthread_mutex_unlock(&queue_access);
     
+    // Create worker thread
+    int ret;
+    pthread_t worker;
+    struct timeval  tv1, tv2;
+    gettimeofday(&tv1, NULL);
+    ret = pthread_create(&worker, NULL, worker_thread, (void *)&worker_args);
+    if(ret){ throw "Failed to create thread"; }
+    
+    // Wait for it to finish
+    void* tmp_ret;
+    ret = pthread_join(worker, &tmp_ret);
+    gettimeofday(&tv2, NULL);
+    ret = *((int*) tmp_ret);
+    free(tmp_ret);
 
+    CHECK(worker_args.qtd_worker_jobs == 1);
 
-//     QUEUE_TYPE q2;
-//     pthread_structs_destroy();
-// }
+    double total_time = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
+                        (double) (tv2.tv_sec - tv1.tv_sec);
+    CHECK(worker_args.total_job_time < total_time);
+    pthread_structs_destroy();
+}
+
+TEST_CASE("Worker - Statistics"){
+    pthread_structs_init();
+
+    // Fill queue
+    pthread_mutex_lock(&queue_access);
+    std::shared_ptr<QUEUE_TYPE> q1 = std::make_shared<QUEUE_TYPE>();
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    q1->push_back(string2fractalparam("160 60 80 60 0.2709202500 0.0047491250 0.2709203750 0.0047492500"));
+    q1->push_back(generateEOW());
+    worker_data worker_args(q1);
+    pthread_mutex_unlock(&queue_access);
+    
+    // Create worker thread
+    int ret;
+    pthread_t worker;
+    struct timeval  tv1, tv2;
+    gettimeofday(&tv1, NULL);
+    ret = pthread_create(&worker, NULL, worker_thread, (void *)&worker_args);
+    if(ret){ throw "Failed to create thread"; }
+    
+    // Wait for it to finish
+    void* tmp_ret;
+    ret = pthread_join(worker, &tmp_ret);
+    gettimeofday(&tv2, NULL);
+    ret = *((int*) tmp_ret);
+    free(tmp_ret);
+
+    CHECK(worker_args.qtd_worker_jobs == 3);
+
+    double total_time = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
+                        (double) (tv2.tv_sec - tv1.tv_sec);
+    CHECK(worker_args.total_job_time < total_time);
+    pthread_structs_destroy();
+}

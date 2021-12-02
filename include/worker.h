@@ -8,6 +8,7 @@
 typedef struct worker_data {
     std::shared_ptr<QUEUE_TYPE> task_queue;
     int qtd_worker_jobs;    // Statistics
+    double total_job_time;
 
     // Constructor
     worker_data(std::shared_ptr<QUEUE_TYPE> queue_ptr);

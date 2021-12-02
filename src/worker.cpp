@@ -3,7 +3,7 @@
 #include <iostream>
 
 worker_data::worker_data(std::shared_ptr<QUEUE_TYPE> queue_ptr)
-    : qtd_worker_jobs(0)
+    : qtd_worker_jobs(0), total_job_time(0)
 {
     this->task_queue = queue_ptr;
 }
