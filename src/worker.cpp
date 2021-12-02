@@ -40,6 +40,7 @@ void* worker_thread(void* data){
             args->qtd_worker_jobs += 1;
             double total_time = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
                                 (double) (tv2.tv_sec - tv1.tv_sec);
+            args->total_job_time += total_time;
             std::cout << "Task completed in " << total_time << " seconds." << std::endl;
         }
     }
