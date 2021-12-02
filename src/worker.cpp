@@ -6,6 +6,7 @@ worker_data::worker_data(std::shared_ptr<QUEUE_TYPE> queue_ptr)
     : qtd_worker_jobs(0), total_job_time(0)
 {
     this->task_queue = queue_ptr;
+    this->job_times = std::make_shared<std::vector<double>>();
 }
 
 void* worker_thread(void* data){
@@ -41,6 +42,7 @@ void* worker_thread(void* data){
             double total_time = (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
                                 (double) (tv2.tv_sec - tv1.tv_sec);
             args->total_job_time += total_time;
+            args->job_times->push_back(total_time);
             std::cout << "Task completed in " << total_time << " seconds." << std::endl;
         }
     }

@@ -7,6 +7,12 @@
 #include <pthread.h>
 #include <queue>
 
+TEST_CASE("mean and std"){
+    std::vector<double> vec = {1,2,3,4,5,6,7,8,9,10};
+    CHECK(mean(vec) == 5.5);
+    CHECK(stdev(vec) == doctest::Approx(2.872281323269));
+}
+
 TEST_CASE("cook_data Comparator"){
     cook_data cook_args(0, 5, "mandelbrot_tasks/t");
     cook_args.completed_tasks = 3;

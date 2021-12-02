@@ -292,6 +292,8 @@ TEST_CASE("Worker - Statistics 1 task"){
                         (double) (tv2.tv_sec - tv1.tv_sec);
     CHECK(worker_args.total_job_time < total_time);
     CHECK(worker_args.total_job_time > 0);
+    CHECK(worker_args.job_times->size() == 1);
+    CHECK(worker_args.job_times->at(0) == worker_args.total_job_time);
     pthread_structs_destroy();
 }
 
@@ -329,5 +331,11 @@ TEST_CASE("Worker - Statistics"){
                         (double) (tv2.tv_sec - tv1.tv_sec);
     CHECK(worker_args.total_job_time < total_time);
     CHECK(worker_args.total_job_time > 0);
+    CHECK(worker_args.job_times->size() == 3);
+    double test_sum = 0;
+    for (double time : *(worker_args.job_times)){
+        test_sum += time;
+    }
+    CHECK(test_sum == worker_args.total_job_time);
     pthread_structs_destroy();
 }

@@ -39,4 +39,8 @@ void createEOWList(std::vector<std::shared_ptr<fractal_param_t>>& output,
 bool equalCookData(cook_data& cd1, cook_data& cd2);
 bool equalQueues(QUEUE_TYPE& q1, QUEUE_TYPE& q2);
 
+double stdev(std::vector<double>& numbers);
+double mean(std::vector<double>& numbers);
+
+
 #endif /* COOK_H */

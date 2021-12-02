@@ -4,6 +4,7 @@
 
 #include <assert.h>     
 #include <iostream>
+#include <cmath>
 
 pthread_cond_t cook_needed;
 pthread_cond_t pot_filled;
@@ -21,6 +22,27 @@ void pthread_structs_destroy(){
 	pthread_cond_destroy(&pot_filled);
 	pthread_cond_destroy(&cook_needed);
 	pthread_mutex_destroy(&queue_access);
+}
+
+double stdev(std::vector<double>& numbers){
+    double _mean = mean(numbers);
+
+    double stdev = 0;
+    for (double i : numbers){
+        stdev += pow(i - _mean, 2);
+    }
+    stdev = stdev / numbers.size();
+    stdev = sqrt(stdev);
+    return stdev;
+}
+
+
+double mean(std::vector<double>& numbers){
+    double sum = 0;
+    for (double i : numbers){
+        sum += i;
+    }
+    return sum / numbers.size();
 }
 
 /*
@@ -152,8 +174,7 @@ void* cook_thread(void* data){
     }
     args->completed_tasks = total_works_done;
 
-    // TODO: compute statistics
-
+    // TODO: compute statistics (remember to ignore 0 threads)
     return EXIT_SUCCESS;
 }
 
