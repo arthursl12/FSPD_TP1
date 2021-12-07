@@ -11,6 +11,7 @@ typedef struct worker_data {
     // Statistics
     int qtd_worker_jobs;    
     double total_job_time;
+    int empty_queue;
     std::shared_ptr<std::vector<double>> job_times;
 
     // Constructor

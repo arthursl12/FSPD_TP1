@@ -370,12 +370,17 @@ TEST_CASE("4 Workers - Queue 16 - Two refills for EOW"){
     pthread_mutex_unlock(&queue_access);
 
     int total_works_done = 0;
+    int total_empty = 0;
     for (int i = 0; i < N; i++){
         total_works_done += workers_args[i]->qtd_worker_jobs;
-        std::cout << *workers[i] << ": " << workers_args[i]->qtd_worker_jobs << std::endl;
+        total_empty += workers_args[i]->empty_queue;
+        std::cout << *workers[i] << ": " << workers_args[i]->qtd_worker_jobs;
+        std::cout << "; Empty: " << workers_args[i]->empty_queue << std::endl;
         CHECK(workers_args[i]->qtd_worker_jobs <= 31);
     }
     CHECK(total_works_done == 31);
-
+    CHECK(total_empty >= 2);
+    if (total_empty > 2)
+        WARN("More threads found empty than really was empty");
     pthread_structs_destroy();
 }

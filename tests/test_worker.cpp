@@ -332,6 +332,7 @@ TEST_CASE("Worker - Statistics"){
     CHECK(worker_args.total_job_time < total_time);
     CHECK(worker_args.total_job_time > 0);
     CHECK(worker_args.job_times->size() == 3);
+    CHECK(worker_args.empty_queue == 0);
     double test_sum = 0;
     for (double time : *(worker_args.job_times)){
         test_sum += time;

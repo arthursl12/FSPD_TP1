@@ -3,7 +3,7 @@
 #include <iostream>
 
 worker_data::worker_data(std::shared_ptr<QUEUE_TYPE> queue_ptr)
-    : qtd_worker_jobs(0), total_job_time(0)
+    : qtd_worker_jobs(0), total_job_time(0), empty_queue(0)
 {
     this->task_queue = queue_ptr;
     this->job_times = std::make_shared<std::vector<double>>();
@@ -19,6 +19,7 @@ void* worker_thread(void* data){
         pthread_mutex_lock(&queue_access);
         while (args->task_queue->empty()){
             // Empty queue, must wake cook
+            args->empty_queue += 1;
             pthread_cond_signal(&cook_needed);
             pthread_cond_wait(&pot_filled, &queue_access);
         }
