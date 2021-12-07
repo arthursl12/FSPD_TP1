@@ -53,7 +53,7 @@ If 'queue_size' is -1, it will be set to 4 times the qtd of threads
 */
 cook_data::cook_data(int n_threads, int queue_size, std::string filename)
     : n_threads(n_threads), filename(filename), 
-      completed_tasks(0), created_tasks(0)
+      created_tasks(0), completed_tasks(0) 
 {
     if (queue_size == -1){
         this->queue_size = MAX_QUEUE_WORKERS_RATIO*n_threads;
@@ -155,7 +155,6 @@ void* cook_thread(void* data){
                 EOW_left -= 1;
             }
         }
-
         pthread_cond_broadcast(&pot_filled);
         pthread_mutex_unlock(&queue_access);
 
@@ -168,13 +167,34 @@ void* cook_thread(void* data){
 
     // Wait for worker threads to end
     int total_works_done = 0;
+    int empty_queue_by_workers = 0;
+    std::vector<double> tasks_by_thread;
+    std::vector<double> tasks_time;
     for (int i = 0; i < args->n_threads; i++){
         total_works_done += workers_args[i]->qtd_worker_jobs;
-        std::cout << *workers[i] << ": " << workers_args[i]->qtd_worker_jobs << std::endl;
+        tasks_by_thread.push_back(workers_args[i]->qtd_worker_jobs);
+        tasks_time.insert(tasks_time.end(), workers_args[i]->job_times->begin(), workers_args[i]->job_times->end());
+        empty_queue_by_workers += workers_args[i]->empty_queue;
+        // std::cout << *workers[i] << ": " << workers_args[i]->qtd_worker_jobs << std::endl;
     }
     args->completed_tasks = total_works_done;
 
-    // TODO: compute statistics (remember to ignore 0 threads)
+    // Show statistics
+    if (args->n_threads > 0){
+        // Tasks by worker
+        double _mean = mean(tasks_by_thread);
+        double _stdev = stdev(tasks_by_thread);
+        printf("Tarefas: total = %d;  média por trabalhador = %f(%f)\n", args->completed_tasks, _mean, _stdev);
+
+        // Task execution time
+        _mean = mean(tasks_time);
+        _stdev = stdev(tasks_time);
+        printf("Tempo médio por tarefa: %.6f (%.6f) ms\n", _mean*1000, _stdev*1000);
+
+        // Empty queue
+        printf("Fila estava vazia: %d vezes\n", empty_queue_by_workers);
+    }
+    
     return EXIT_SUCCESS;
 }
 

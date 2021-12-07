@@ -30,7 +30,7 @@ void* worker_thread(void* data){
         // Do work out of critical section
         if (isEOW(task)){
             foundEOW = true;
-            std::cout << "Found EOW " << pthread_self() << std::endl;
+            // std::cout << "Found EOW " << pthread_self() << std::endl;
         }else{
             // Do work
             struct timeval  tv1, tv2;
@@ -44,7 +44,7 @@ void* worker_thread(void* data){
                                 (double) (tv2.tv_sec - tv1.tv_sec);
             args->total_job_time += total_time;
             args->job_times->push_back(total_time);
-            std::cout << "Task completed in " << total_time << " seconds." << std::endl;
+            // std::cout << "Task completed in " << total_time << " seconds." << std::endl;
         }
     }
 
