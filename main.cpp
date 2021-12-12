@@ -3,6 +3,10 @@
 #include "cook.h"
 #include "worker.h"
 
+#define N_THREADS 4
+#define QUEUE_SIZE -1 	
+// QUEUE_SIZE = -1 => QUEUE_SIZE = MAX_QUEUE_WORKERS_RATIO * N_THREADS
+
 /****************************************************************
  * Essa versao do programa, sequencial le a descricao de um bloco
  * de imagem do conjunto de mandelbrot por vez e faz a geracao
@@ -18,28 +22,36 @@
  * visivel do seu programa na versao que segue o enunciado.
  ****************************************************************/
 int main (int argc, char* argv[]){
-	// // int i,j,k;
-	// fractal_param_t p;
+	// Argument Parsing
+	if ((argc!=2)&&(argc!=3)) {
+		fprintf(stderr,"usage %s filename [color_pick]\n", argv[0] );
+		exit(-1);
+	} 
+	if (argc==3) {
+		color_pick = atoi(argv[2]);
+	} 
+	if ((input=fopen(argv[1],"r"))==NULL) {
+		perror("fdopen");
+		exit(-1);
+	}
 
-	// if ((argc!=2)&&(argc!=3)) {
-	// 	fprintf(stderr,"usage %s filename [color_pick]\n", argv[0] );
-	// 	exit(-1);
-	// } 
-	// if (argc==3) {
-	// 	color_pick = atoi(argv[2]);
-	// } 
-	// if ((input=fopen(argv[1],"r"))==NULL) {
-	// 	perror("fdopen");
-	// 	exit(-1);
-	// }
+	// Main program (creation of cook_thread basically)
+	pthread_structs_init();
+    int ret;
+    pthread_t cook;
 
+	// Fill arguments for cook_thread (with mutex)
+    pthread_mutex_lock(&queue_access);
+    cook_data cook_args(N_THREADS, QUEUE_SIZE, argv[1]);
+    pthread_mutex_unlock(&queue_access);
 
-    // std::cout << "File: " << argv[1] << ", color: " << color_pick << std::endl;
-	// // init_gr();  // Essa biblioteca nao funciona com Pthreads! REMOVA
-	// while (input_params(&p)!=EOF) {
-	// 	fractal(&p); // No exercicio a funcao nao vai exibir nada! :-(
-	// }
-	// // end_gr();  // Essa biblioteca nao funciona com Pthreads! REMOVA
+    // Create cook thread
+    ret = pthread_create(&cook, NULL, cook_thread, (void *)&cook_args);
+    if(ret){ throw "Failed to create thread"; }
     
+    // Wait for it to finish
+    ret = pthread_join(cook, NULL);
+	
+	pthread_structs_destroy();
 	return 0;
 }
