@@ -24,7 +24,11 @@ void pthread_structs_destroy(){
 	pthread_mutex_destroy(&queue_access);
 }
 
+/*
+Computes standard deviation of a vector of doubles
+*/
 double stdev(std::vector<double>& numbers){
+
     double _mean = mean(numbers);
 
     double stdev = 0;
@@ -36,7 +40,9 @@ double stdev(std::vector<double>& numbers){
     return stdev;
 }
 
-
+/*
+Computes the mean of a vector of doubles
+*/
 double mean(std::vector<double>& numbers){
     double sum = 0;
     for (double i : numbers){
@@ -87,7 +93,7 @@ void* cook_thread(void* data){
     std::vector<std::shared_ptr<fractal_param_t>> output;
 
     // First fill of the pot
-    pthread_mutex_lock(&queue_access);      // Lock queue acess
+    pthread_mutex_lock(&queue_access);      
     bool eof = readFromFile(output, infile, args->queue_size);
     for (auto fp_ptr : output){
         args->task_queue->push_back(fp_ptr);
@@ -116,6 +122,7 @@ void* cook_thread(void* data){
         if(ret){ throw "Failed to create thread"; }
     }
 
+    // Main loop
     bool finishied = false;
     bool eof_lastfill = eof;          // if last fill reached eof
     int EOW_left = args->n_threads;   // how many EOW must be put into queue yet
@@ -142,14 +149,14 @@ void* cook_thread(void* data){
         if (queue_free_spaces >= EOW_left){
             // Ideal situation: we can put all EOW's left in this refill
             // The ideal case is when EOW_left == args->n_threads but works 
-            // it's not true as well
+            // if it's not true as well
             for (int i = 0; i < EOW_left; i++){
                 args->task_queue->push_back(generateEOW());
                 EOW_left -= 1;
             }
         }else if (queue_free_spaces > 0){
             // We can put only some EOW's left in this refill
-            // We'll do it and wait for other runs
+            // We'll do it and wait for other runs to put the rest
             for (int i = 0; i < queue_free_spaces; i++){
                 args->task_queue->push_back(generateEOW());
                 EOW_left -= 1;
@@ -159,7 +166,7 @@ void* cook_thread(void* data){
         pthread_mutex_unlock(&queue_access);
 
         if (EOW_left == 0){
-            // The EOWs in queue are the last objective for the cook, we can
+            // To put EOWs in queue are the last objective for the cook, we can
             // end the loop
             finishied = true;
         }
