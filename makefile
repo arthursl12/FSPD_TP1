@@ -44,6 +44,7 @@ $(OBJDIR): $(BUILDDIR)/%.o : $(SRCDIR)/%.cpp
 # Main module compilation rule
 $(TARGET).o: $(OBJDIR)
 	@echo COMPILING MAIN
+	$(shell mkdir -p $(BINDIR))
 	$(CXX) $(INC) $(CXXFLAGS) $(OBJDIR) $(TARGET).cpp $(LIBS) -o $(BINDIR)/$(TARGET)
 
 # Base execution rule
