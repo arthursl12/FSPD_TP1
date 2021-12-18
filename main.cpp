@@ -3,7 +3,7 @@
 #include "cook.h"
 #include "worker.h"
 
-#define N_THREADS 4
+#define N_THREADS_DEFAULT 4
 #define QUEUE_SIZE -1 	
 // QUEUE_SIZE = -1 => QUEUE_SIZE = MAX_QUEUE_WORKERS_RATIO * N_THREADS
 
@@ -22,27 +22,38 @@
  * visivel do seu programa na versao que segue o enunciado.
  ****************************************************************/
 int main (int argc, char* argv[]){
-	// Argument Parsing
+	int n_threads = -1;
+
+	// ==== Argument Parsing ====
 	if ((argc!=2)&&(argc!=3)) {
-		fprintf(stderr,"usage %s filename [color_pick]\n", argv[0] );
+		fprintf(stderr,"usage %s filename [n_threads]\n", argv[0] );
 		exit(-1);
 	} 
 	if (argc==3) {
-		color_pick = atoi(argv[2]);
+		n_threads = atoi(argv[2]);
+		if (n_threads > 20){
+			perror("n_threads > 20");
+			exit(-1);
+		}
 	} 
 	if ((input=fopen(argv[1],"r"))==NULL) {
 		perror("fdopen");
 		exit(-1);
 	}
 
-	// Main program (creation of cook_thread basically)
+	// Define number of threads, use default if not provided in parameters
+	if (n_threads == -1){
+		n_threads = N_THREADS_DEFAULT;
+	}
+
+	// ==== Main program (creation of cook_thread basically) ====
 	pthread_structs_init();
     int ret;
     pthread_t cook;
 
 	// Fill arguments for cook_thread (with mutex)
     pthread_mutex_lock(&queue_access);
-    cook_data cook_args(N_THREADS, QUEUE_SIZE, argv[1]);
+    cook_data cook_args(n_threads, QUEUE_SIZE, argv[1]);
     pthread_mutex_unlock(&queue_access);
 
     // Create cook thread
